@@ -1,0 +1,1222 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Zoé Emrys Label — Informer Autrement, Depuis le Terrain</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Lora:ital,wght@0,400;0,600;1,400&family=Source+Sans+3:wght@300;400;600&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --black: #0A0A0A;
+      --dark: #111111;
+      --dark2: #1A1A1A;
+      --gold: #C9A84C;
+      --gold2: #E8C96A;
+      --gold-dim: rgba(201,168,76,0.15);
+      --white: #F5F2EC;
+      --grey: #888;
+      --grey2: #333;
+      --red: #CC2936;
+      --green: #2a8a3a;
+    }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: 'Source Sans 3', sans-serif;
+      background: var(--black);
+      color: var(--white);
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* ── ADMIN BAR (visible quand admin connecté) ── */
+    #adminBar {
+      display: none;
+      background: var(--gold);
+      color: var(--black);
+      padding: 0.45rem clamp(1rem, 4vw, 3rem);
+      font-family: 'Oswald', sans-serif;
+      font-size: 0.78rem; font-weight: 700;
+      letter-spacing: 0.08em;
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    #adminBar.visible { display: flex; }
+    #adminBar a {
+      color: var(--black); text-decoration: none; font-weight: 700;
+      border: 1px solid rgba(0,0,0,0.25); padding: 0.2rem 0.7rem;
+      transition: background 0.2s;
+    }
+    #adminBar a:hover { background: rgba(0,0,0,0.1); }
+
+    /* ── BREAKING TICKER ── */
+    .ticker-wrap {
+      background: var(--red);
+      padding: 0.45rem 0;
+      overflow: hidden;
+      position: relative;
+    }
+    .ticker-label {
+      position: absolute; left: 0; top: 0; bottom: 0; z-index: 2;
+      background: var(--black);
+      color: var(--gold);
+      font-family: 'Oswald', sans-serif;
+      font-size: 0.7rem; font-weight: 700;
+      letter-spacing: 0.15em; text-transform: uppercase;
+      padding: 0 1.2rem;
+      display: flex; align-items: center;
+      border-right: 2px solid var(--gold);
+    }
+    .ticker-track {
+      display: flex; gap: 4rem;
+      animation: ticker 30s linear infinite;
+      padding-left: 160px;
+      white-space: nowrap;
+    }
+    .ticker-track span {
+      font-size: 0.8rem; font-weight: 600; letter-spacing: 0.03em;
+    }
+    .ticker-track span::before { content: '●'; margin-right: 0.6rem; opacity: 0.7; }
+    @keyframes ticker { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+
+    /* ── TOPBAR ── */
+    .topbar {
+      background: var(--dark); border-bottom: 1px solid var(--grey2);
+      padding: 0.5rem clamp(1rem, 4vw, 3rem);
+      display: flex; justify-content: space-between; align-items: center;
+    }
+    .topbar-left { font-size: 0.75rem; color: var(--grey); letter-spacing: 0.05em; }
+    .topbar-right { display: flex; gap: 1.2rem; align-items: center; }
+    .topbar-right a {
+      font-size: 0.75rem; color: var(--grey); text-decoration: none;
+      transition: color 0.2s;
+    }
+    .topbar-right a:hover { color: var(--gold); }
+
+    /* ── NAV ── */
+    nav {
+      background: var(--black);
+      border-bottom: 1px solid var(--grey2);
+      position: sticky; top: 0; z-index: 200;
+    }
+    .nav-main {
+      max-width: 1280px; margin: 0 auto;
+      padding: 0 clamp(1rem, 4vw, 3rem);
+      display: flex; align-items: center; justify-content: space-between;
+      height: 64px;
+    }
+    .nav-logo {
+      display: flex; flex-direction: column; text-decoration: none;
+    }
+    .nav-logo .logo-top {
+      font-family: 'Oswald', sans-serif;
+      font-size: clamp(1.1rem, 3.5vw, 1.6rem); font-weight: 700;
+      line-height: 1;
+      color: var(--white);
+      letter-spacing: 0.05em;
+    }
+    .nav-logo .logo-top span { color: var(--gold); }
+    .nav-logo .logo-sub {
+      font-size: 0.5rem; letter-spacing: 0.2em;
+      color: var(--gold); text-transform: uppercase;
+      margin-top: 1px;
+    }
+    /* Hamburger */
+    .nav-hamburger {
+      display: none;
+      flex-direction: column; gap: 5px; cursor: pointer;
+      background: none; border: none; padding: 0.5rem;
+    }
+    .nav-hamburger span {
+      display: block; width: 24px; height: 2px; background: var(--white);
+      transition: all 0.3s;
+    }
+    .nav-links {
+      display: flex; gap: 0; align-items: center;
+    }
+    .nav-links a {
+      font-family: 'Oswald', sans-serif;
+      font-size: 0.82rem; font-weight: 500;
+      letter-spacing: 0.1em; text-transform: uppercase;
+      text-decoration: none; color: var(--white);
+      padding: 0.5rem 1rem;
+      border-left: 1px solid var(--grey2);
+      transition: color 0.2s, background 0.2s;
+      height: 64px; display: flex; align-items: center;
+    }
+    .nav-links a:hover { color: var(--gold); }
+    .nav-links a.active { color: var(--gold); }
+    .nav-links a.cat-fact { color: var(--red); }
+    .nav-links a.cat-fact:hover { color: var(--gold); }
+    .nav-admin {
+      background: var(--gold);
+      color: var(--black) !important;
+      font-weight: 700 !important;
+      margin-left: 0.5rem; border-left: none !important;
+      padding: 0.5rem 1rem !important;
+    }
+    .nav-admin:hover { background: var(--gold2) !important; color: var(--black) !important; }
+
+    /* Mobile nav drawer */
+    .nav-drawer {
+      display: none;
+      position: fixed; inset: 0; top: 64px;
+      background: var(--black); border-top: 2px solid var(--gold);
+      z-index: 199; flex-direction: column;
+      padding: 1.5rem;
+      overflow-y: auto;
+    }
+    .nav-drawer.open { display: flex; }
+    .nav-drawer a {
+      font-family: 'Oswald', sans-serif;
+      font-size: 1.2rem; font-weight: 600; letter-spacing: 0.1em;
+      text-decoration: none; color: var(--white);
+      padding: 1rem 0;
+      border-bottom: 1px solid var(--grey2);
+      transition: color 0.2s;
+    }
+    .nav-drawer a:hover, .nav-drawer a.active { color: var(--gold); }
+    .nav-drawer a.cat-fact { color: var(--red); }
+    .nav-drawer a.nav-admin {
+      background: var(--gold); color: var(--black) !important;
+      padding: 0.8rem 1rem; margin-top: 1rem; border: none;
+      text-align: center;
+    }
+
+    /* ── HERO ── */
+    .hero {
+      position: relative; overflow: hidden;
+      min-height: 85vh;
+      display: flex; flex-direction: column; justify-content: flex-end;
+      background: var(--dark2);
+    }
+    .hero-bg {
+      position: absolute; inset: 0;
+      background:
+        linear-gradient(to bottom, transparent 30%, rgba(0,0,0,0.95) 100%),
+        linear-gradient(135deg, #0A0A0A 0%, #1f1a10 50%, #0A0A0A 100%);
+    }
+    .hero-img {
+      position: absolute; inset: 0;
+      object-fit: cover; width: 100%; height: 100%;
+      opacity: 0.35;
+    }
+    .hero-pattern {
+      position: absolute; inset: 0;
+      background-image:
+        repeating-linear-gradient(0deg, transparent, transparent 60px, rgba(201,168,76,0.03) 60px, rgba(201,168,76,0.03) 61px),
+        repeating-linear-gradient(90deg, transparent, transparent 60px, rgba(201,168,76,0.03) 60px, rgba(201,168,76,0.03) 61px);
+    }
+    .hero-badge {
+      position: absolute; top: 3rem; right: 3rem;
+      width: 110px; height: 110px;
+      border: 2px solid var(--gold);
+      border-radius: 50%;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      background: rgba(0,0,0,0.7);
+      backdrop-filter: blur(8px);
+    }
+    .hero-badge .ze {
+      font-family: 'Oswald', sans-serif;
+      font-size: 2rem; font-weight: 700; color: var(--gold); line-height: 1;
+    }
+    .hero-badge .ze-sub {
+      font-size: 0.42rem; letter-spacing: 0.2em; color: var(--gold);
+      text-transform: uppercase; margin-top: 2px;
+    }
+    .hero-content {
+      position: relative; z-index: 2;
+      max-width: 1280px; margin: 0 auto; width: 100%;
+      padding: 3rem clamp(1rem, 4vw, 3rem);
+    }
+    .hero-category {
+      display: inline-flex; align-items: center; gap: 0.6rem;
+      background: var(--red);
+      color: #fff; font-family: 'Oswald', sans-serif;
+      font-size: 0.7rem; font-weight: 600; letter-spacing: 0.15em; text-transform: uppercase;
+      padding: 0.3rem 0.8rem; margin-bottom: 1.2rem;
+    }
+    .hero-title {
+      font-family: 'Oswald', sans-serif;
+      font-size: clamp(1.8rem, 5vw, 4.5rem);
+      font-weight: 700; line-height: 1.05;
+      letter-spacing: -0.01em;
+      max-width: 820px;
+      text-shadow: 0 2px 20px rgba(0,0,0,0.5);
+    }
+    .hero-title em { color: var(--gold); font-style: normal; }
+    .hero-meta {
+      display: flex; align-items: center; gap: 1.5rem;
+      margin-top: 1.5rem; flex-wrap: wrap;
+    }
+    .hero-meta .date { font-size: 0.8rem; color: var(--grey); }
+    .hero-meta .author { font-size: 0.8rem; color: var(--gold); font-weight: 600; }
+    .hero-excerpt {
+      margin-top: 1rem;
+      font-family: 'Lora', serif;
+      font-size: clamp(0.9rem, 1.5vw, 1.1rem);
+      line-height: 1.7; color: rgba(245,242,236,0.75);
+      max-width: 600px;
+    }
+    .hero-cta {
+      margin-top: 2rem;
+      display: inline-flex; align-items: center; gap: 0.8rem;
+      background: var(--gold);
+      color: var(--black);
+      font-family: 'Oswald', sans-serif;
+      font-size: 0.85rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase;
+      padding: 0.85rem 2rem;
+      text-decoration: none; cursor: pointer; border: none;
+      transition: background 0.2s, transform 0.2s;
+    }
+    .hero-cta:hover { background: var(--gold2); transform: translateX(4px); }
+    .hero-cta svg { width: 16px; height: 16px; }
+
+    /* ── SECTION WRAPPER ── */
+    .section-wrap { max-width: 1280px; margin: 0 auto; padding: 0 clamp(1rem, 4vw, 3rem); }
+
+    /* ── SECTION HEADING ── */
+    .section-heading {
+      display: flex; align-items: center; gap: 1rem;
+      margin: 3.5rem 0 2rem; flex-wrap: wrap;
+    }
+    .section-heading .cat-label {
+      font-family: 'Oswald', sans-serif;
+      font-size: 0.7rem; font-weight: 700; letter-spacing: 0.2em; text-transform: uppercase;
+      color: var(--black); background: var(--gold);
+      padding: 0.3rem 0.8rem;
+    }
+    .section-heading .cat-title {
+      font-family: 'Oswald', sans-serif;
+      font-size: 1.4rem; font-weight: 600; letter-spacing: 0.02em;
+      color: var(--white);
+    }
+    .section-heading .line { flex: 1; height: 1px; background: var(--grey2); min-width: 30px; }
+    .section-heading .view-all {
+      font-size: 0.75rem; color: var(--gold); text-decoration: none;
+      letter-spacing: 0.1em; text-transform: uppercase; font-weight: 600;
+      transition: opacity 0.2s; white-space: nowrap;
+    }
+    .section-heading .view-all:hover { opacity: 0.7; }
+
+    /* ── CARDS GRID ── */
+    .cards-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 1.5rem;
+    }
+    .cards-grid.featured-grid {
+      grid-template-columns: 2fr 1fr 1fr;
+    }
+
+    /* ── CARD ── */
+    .card {
+      background: var(--dark2);
+      border: 1px solid var(--grey2);
+      cursor: pointer;
+      transition: transform 0.25s, border-color 0.25s;
+      display: flex; flex-direction: column;
+      animation: fadeUp 0.5s ease both;
+    }
+    .card:hover { transform: translateY(-3px); border-color: var(--gold); }
+    .card-thumb {
+      position: relative; overflow: hidden;
+      background: linear-gradient(135deg, #1f1a10, #2a2010);
+      aspect-ratio: 16/9;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .card-thumb img {
+      position: absolute; inset: 0;
+      width: 100%; height: 100%; object-fit: cover;
+      transition: transform 0.4s ease;
+    }
+    .card:hover .card-thumb img { transform: scale(1.05); }
+    .card-thumb.actualites { background: linear-gradient(135deg, #1a1010, #2a1515); }
+    .card-thumb.reportages { background: linear-gradient(135deg, #101a10, #152a15); }
+    .card-thumb.fact { background: linear-gradient(135deg, #0a0a1a, #101525); }
+    .card-thumb.mobile { background: linear-gradient(135deg, #1a1015, #250a1a); }
+    .card-thumb-icon {
+      font-size: 3rem; opacity: 0.15; position: relative; z-index: 1;
+    }
+    .card-thumb .cat-chip {
+      position: absolute; top: 0.75rem; left: 0.75rem; z-index: 2;
+      font-family: 'Oswald', sans-serif;
+      font-size: 0.65rem; font-weight: 700; letter-spacing: 0.15em; text-transform: uppercase;
+      padding: 0.25rem 0.6rem;
+    }
+    .cat-chip.actualites { background: var(--red); color: #fff; }
+    .cat-chip.reportages { background: #1a5c2a; color: #fff; }
+    .cat-chip.fact { background: #0a2a5c; color: #fff; }
+    .cat-chip.mobile { background: #5c1a5c; color: #fff; }
+    .cat-chip.default { background: var(--gold); color: var(--black); }
+    .card-body { padding: 1.25rem; flex: 1; display: flex; flex-direction: column; }
+    .card-date { font-size: 0.7rem; color: var(--grey); margin-bottom: 0.5rem; letter-spacing: 0.05em; }
+    .card-title {
+      font-family: 'Oswald', sans-serif;
+      font-size: 1.05rem; font-weight: 600; line-height: 1.3;
+      margin-bottom: 0.75rem; flex: 1;
+    }
+    .card-excerpt { font-size: 0.82rem; line-height: 1.65; color: rgba(245,242,236,0.6); }
+    .card-footer {
+      padding: 0.75rem 1.25rem;
+      border-top: 1px solid var(--grey2);
+      display: flex; justify-content: space-between; align-items: center;
+    }
+    .card-author { font-size: 0.72rem; color: var(--grey); font-weight: 600; }
+    .card-read {
+      font-size: 0.7rem; color: var(--gold); font-weight: 700;
+      letter-spacing: 0.1em; text-transform: uppercase;
+    }
+    .card.large .card-thumb { aspect-ratio: 4/3; }
+    .card.large .card-title { font-size: 1.3rem; }
+
+    /* ── SEARCH BAR ── */
+    .search-wrap {
+      padding: 2rem 0;
+      border-bottom: 1px solid var(--grey2);
+      display: flex; gap: 0;
+    }
+    .search-wrap input {
+      flex: 1; background: var(--dark2); border: 1px solid var(--grey2);
+      border-right: none; color: var(--white);
+      font-family: 'Source Sans 3', sans-serif; font-size: 0.95rem;
+      padding: 0.8rem 1.2rem; outline: none; transition: border-color 0.2s;
+      min-width: 0;
+    }
+    .search-wrap input:focus { border-color: var(--gold); }
+    .search-wrap input::placeholder { color: var(--grey); }
+    .search-wrap button {
+      background: var(--gold); color: var(--black); border: none;
+      padding: 0.8rem 1.2rem; cursor: pointer;
+      font-family: 'Oswald', sans-serif; font-size: 0.85rem; font-weight: 700;
+      letter-spacing: 0.1em; text-transform: uppercase;
+      transition: background 0.2s; white-space: nowrap;
+    }
+    .search-wrap button:hover { background: var(--gold2); }
+
+    /* ── FILTER TAGS ── */
+    .filter-tags {
+      display: flex; gap: 0.5rem; flex-wrap: wrap;
+      padding: 1.5rem 0;
+    }
+    .filter-tag {
+      font-family: 'Oswald', sans-serif;
+      font-size: 0.72rem; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase;
+      padding: 0.35rem 1rem; cursor: pointer;
+      border: 1px solid var(--grey2); color: var(--grey);
+      background: transparent; transition: all 0.2s;
+    }
+    .filter-tag:hover, .filter-tag.active { background: var(--gold); color: var(--black); border-color: var(--gold); }
+
+    /* ── NEWSLETTER ── */
+    .newsletter-section {
+      margin: 4rem 0;
+      background: linear-gradient(135deg, var(--dark2) 0%, #1a1408 100%);
+      border: 1px solid var(--gold);
+      padding: 3rem clamp(1.5rem, 5vw, 4rem);
+      position: relative; overflow: hidden;
+    }
+    .newsletter-section::before {
+      content: '✉';
+      position: absolute; right: 2rem; top: 50%; transform: translateY(-50%);
+      font-size: 8rem; opacity: 0.04;
+    }
+    .newsletter-inner { max-width: 560px; position: relative; z-index: 1; }
+    .newsletter-label {
+      font-family: 'Oswald', sans-serif;
+      font-size: 0.65rem; font-weight: 700; letter-spacing: 0.25em; text-transform: uppercase;
+      color: var(--gold); margin-bottom: 0.75rem;
+    }
+    .newsletter-title {
+      font-family: 'Oswald', sans-serif;
+      font-size: clamp(1.4rem, 3vw, 2rem); font-weight: 700;
+      color: var(--white); margin-bottom: 0.75rem; line-height: 1.2;
+    }
+    .newsletter-sub {
+      font-size: 0.875rem; line-height: 1.65; color: rgba(245,242,236,0.65);
+      margin-bottom: 1.5rem;
+    }
+    .newsletter-form { display: flex; gap: 0; flex-wrap: wrap; }
+    .newsletter-form input {
+      flex: 1; min-width: 200px;
+      background: var(--dark); border: 1px solid var(--grey2); border-right: none;
+      color: var(--white);
+      font-family: 'Source Sans 3', sans-serif; font-size: 0.9rem;
+      padding: 0.8rem 1.2rem; outline: none; transition: border-color 0.2s;
+    }
+    .newsletter-form input:focus { border-color: var(--gold); }
+    .newsletter-form input::placeholder { color: var(--grey); opacity: 0.6; }
+    .newsletter-form button {
+      background: var(--gold); color: var(--black); border: none;
+      padding: 0.8rem 1.5rem; cursor: pointer;
+      font-family: 'Oswald', sans-serif; font-size: 0.85rem; font-weight: 700;
+      letter-spacing: 0.1em; text-transform: uppercase;
+      transition: background 0.2s; white-space: nowrap;
+    }
+    .newsletter-form button:hover { background: var(--gold2); }
+    .newsletter-msg {
+      margin-top: 0.75rem; font-size: 0.82rem; font-weight: 600;
+      display: none;
+    }
+    .newsletter-msg.success { color: #5fd47a; display: block; }
+    .newsletter-msg.error { color: var(--red); display: block; }
+    .newsletter-count {
+      margin-top: 1rem;
+      font-size: 0.75rem; color: var(--grey); letter-spacing: 0.05em;
+    }
+    .newsletter-count strong { color: var(--gold); }
+
+    /* ── ABOUT STRIP ── */
+    .about-strip {
+      margin: 4rem 0;
+      background: var(--dark2); border: 1px solid var(--grey2);
+      padding: 2.5rem; display: flex; gap: 3rem; align-items: center;
+      border-left: 4px solid var(--gold);
+    }
+    .about-strip .logo-circle {
+      width: 80px; height: 80px; border-radius: 50%;
+      border: 2px solid var(--gold);
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+      font-family: 'Oswald', sans-serif; font-size: 1.4rem; font-weight: 700;
+      color: var(--gold);
+    }
+    .about-strip h3 {
+      font-family: 'Oswald', sans-serif; font-size: 1.2rem; font-weight: 600;
+      color: var(--gold); margin-bottom: 0.5rem;
+    }
+    .about-strip p { font-size: 0.875rem; line-height: 1.7; color: rgba(245,242,236,0.7); }
+    .about-strip .tags { display: flex; gap: 0.5rem; flex-wrap: wrap; margin-top: 1rem; }
+    .about-strip .tag {
+      font-size: 0.7rem; background: var(--gold-dim); color: var(--gold);
+      padding: 0.25rem 0.7rem; letter-spacing: 0.08em; text-transform: uppercase;
+    }
+
+    /* ── FOOTER ── */
+    footer {
+      background: var(--dark); border-top: 1px solid var(--grey2);
+      margin-top: 5rem;
+    }
+    .footer-main {
+      max-width: 1280px; margin: 0 auto;
+      padding: 3rem clamp(1rem, 4vw, 3rem);
+      display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 3rem;
+    }
+    .footer-brand .logo-text {
+      font-family: 'Oswald', sans-serif; font-size: 1.5rem; font-weight: 700;
+      color: var(--white); letter-spacing: 0.05em;
+    }
+    .footer-brand .logo-text span { color: var(--gold); }
+    .footer-brand .tagline {
+      font-size: 0.7rem; color: var(--gold); letter-spacing: 0.2em;
+      text-transform: uppercase; margin-top: 2px; margin-bottom: 1rem;
+    }
+    .footer-brand p { font-size: 0.825rem; line-height: 1.7; color: var(--grey); max-width: 260px; }
+    .footer-contact { margin-top: 1rem; }
+    .footer-contact a {
+      display: flex; align-items: center; gap: 0.5rem;
+      font-size: 0.8rem; color: var(--grey); text-decoration: none; margin-bottom: 0.4rem;
+      transition: color 0.2s;
+    }
+    .footer-contact a:hover { color: var(--gold); }
+    .footer-col h4 {
+      font-family: 'Oswald', sans-serif; font-size: 0.7rem; font-weight: 700;
+      letter-spacing: 0.2em; text-transform: uppercase; color: var(--gold);
+      margin-bottom: 1rem; padding-bottom: 0.5rem; border-bottom: 1px solid var(--grey2);
+    }
+    .footer-col a {
+      display: block; font-size: 0.82rem; color: var(--grey); text-decoration: none;
+      margin-bottom: 0.5rem; transition: color 0.2s;
+    }
+    .footer-col a:hover { color: var(--white); }
+    .footer-bottom {
+      background: var(--black); border-top: 1px solid var(--grey2);
+      padding: 1rem clamp(1rem, 4vw, 3rem);
+      display: flex; justify-content: space-between; align-items: center;
+      flex-wrap: wrap; gap: 0.5rem;
+    }
+    .footer-bottom span { font-size: 0.75rem; color: var(--grey); }
+    .footer-bottom a {
+      font-size: 0.75rem; color: var(--gold); text-decoration: none; font-weight: 600;
+    }
+
+    /* ── MODAL ── */
+    .modal-overlay {
+      display: none; position: fixed; inset: 0;
+      background: rgba(0,0,0,0.92); z-index: 500;
+      overflow-y: auto; padding: 1rem;
+    }
+    .modal-overlay.open { display: block; }
+    .modal {
+      max-width: 780px; margin: 0 auto;
+      background: var(--dark2); border: 1px solid var(--grey2);
+      position: relative;
+    }
+    .modal-header-img {
+      height: 280px;
+      background: linear-gradient(135deg, #1f1a10, #2a2010);
+      display: flex; align-items: center; justify-content: center;
+      position: relative; overflow: hidden;
+    }
+    .modal-header-img img {
+      position: absolute; inset: 0;
+      width: 100%; height: 100%; object-fit: cover; opacity: 0.6;
+    }
+    .modal-header-img .icon { font-size: 5rem; opacity: 0.1; position: relative; z-index: 1; }
+    .modal-close-btn {
+      position: absolute; top: 1rem; right: 1rem; z-index: 2;
+      background: var(--gold); color: var(--black); border: none;
+      width: 36px; height: 36px; cursor: pointer;
+      font-size: 1.1rem; font-weight: 700;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .modal-body { padding: clamp(1.5rem, 4vw, 2.5rem); }
+    .modal-cat { display: inline-block; margin-bottom: 1rem; }
+    .modal-title {
+      font-family: 'Oswald', sans-serif;
+      font-size: clamp(1.4rem, 3vw, 2.2rem); font-weight: 700;
+      line-height: 1.15; margin-bottom: 1rem;
+    }
+    .modal-meta { display: flex; gap: 1.5rem; flex-wrap: wrap; margin-bottom: 2rem; padding-bottom: 1.5rem; border-bottom: 1px solid var(--grey2); }
+    .modal-meta span { font-size: 0.78rem; color: var(--grey); }
+    .modal-meta strong { color: var(--gold); }
+    .modal-content {
+      font-family: 'Lora', serif;
+      font-size: 1rem; line-height: 1.85; color: rgba(245,242,236,0.8);
+    }
+    .modal-content p { margin-bottom: 1.3rem; }
+
+    /* ── UTILS ── */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .no-results {
+      text-align: center; padding: 4rem 2rem; color: var(--grey);
+      font-family: 'Oswald', sans-serif; font-size: 1.1rem; letter-spacing: 0.05em;
+    }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 1024px) {
+      .nav-links { display: none; }
+      .nav-hamburger { display: flex; }
+      .cards-grid.featured-grid { grid-template-columns: 1fr 1fr; }
+      .footer-main { grid-template-columns: 1fr 1fr; gap: 2rem; }
+    }
+    @media (max-width: 768px) {
+      .hero { min-height: 65vh; }
+      .hero-badge { display: none; }
+      .cards-grid.featured-grid { grid-template-columns: 1fr; }
+      .cards-grid { grid-template-columns: 1fr; }
+      .about-strip { flex-direction: column; gap: 1.5rem; }
+      .footer-main { grid-template-columns: 1fr; gap: 1.5rem; }
+      .newsletter-section { padding: 2rem 1.5rem; }
+      .newsletter-form { flex-direction: column; }
+      .newsletter-form input { border-right: 1px solid var(--grey2); border-bottom: none; }
+      .modal-header-img { height: 200px; }
+    }
+    @media (max-width: 480px) {
+      .topbar { display: none; }
+      .search-wrap button { padding: 0.8rem; font-size: 0.75rem; letter-spacing: 0; }
+      .ticker-label { font-size: 0.6rem; padding: 0 0.8rem; }
+      .hero-cta { font-size: 0.75rem; padding: 0.7rem 1.2rem; }
+      .section-heading { margin: 2.5rem 0 1.5rem; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ADMIN BAR (affiché si admin connecté) -->
+<div id="adminBar">
+  <span>⚙ Mode Administrateur · Connecté comme <strong id="adminBarName">zoelabel</strong></span>
+  <div style="display:flex;gap:0.8rem;align-items:center;">
+    <a href="admin.html">Tableau de bord</a>
+    <a href="admin.html" onclick="sessionStorage.removeItem('zel_admin_session');return true;">Déconnexion</a>
+  </div>
+</div>
+
+<!-- BREAKING NEWS TICKER -->
+<div class="ticker-wrap">
+  <div class="ticker-label">DIRECT</div>
+  <div class="ticker-track" id="tickerTrack">
+    <span>Kinshasa : suivez toute l'actualité en temps réel</span>
+    <span>RDC — Afrique — Monde : Informer autrement, depuis le terrain</span>
+    <span>Zoé Emrys Label : Journalisme mobile & vérification des faits</span>
+    <span>Actualités • Reportages • Fact-checking • Journalisme mobile</span>
+    <span>Instagram : @Zoe_Emrys_Label | Tél : +243 977 429 774</span>
+    <span>La vérité, notre priorité</span>
+    <span>Kinshasa : suivez toute l'actualité en temps réel</span>
+    <span>RDC — Afrique — Monde : Informer autrement, depuis le terrain</span>
+    <span>Zoé Emrys Label : Journalisme mobile & vérification des faits</span>
+    <span>Actualités • Reportages • Fact-checking • Journalisme mobile</span>
+    <span>Instagram : @Zoe_Emrys_Label | Tél : +243 977 429 774</span>
+    <span>La vérité, notre priorité</span>
+  </div>
+</div>
+
+<!-- TOPBAR -->
+<div class="topbar">
+  <div class="topbar-left" id="topbar-date">Kinshasa · RDC | Afrique | Monde</div>
+  <div class="topbar-right">
+    <a href="https://instagram.com/Zoe_Emrys_Label" target="_blank">📷 Instagram</a>
+    <a href="tel:+243977429774">📞 +243 977 429 774</a>
+    <a href="admin.html" style="color:var(--gold);font-weight:600;">⚙ Admin</a>
+  </div>
+</div>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-main">
+    <a class="nav-logo" href="index.html">
+      <div class="logo-top">ZOÉ <span>EMRYS</span> LABEL</div>
+      <div class="logo-sub">— Informer autrement, depuis le terrain —</div>
+    </a>
+    <button class="nav-hamburger" id="hamburgerBtn" onclick="toggleDrawer()" aria-label="Menu">
+      <span></span><span></span><span></span>
+    </button>
+    <div class="nav-links">
+      <a href="#actualites" class="active">Actualités</a>
+      <a href="#reportages">Reportages</a>
+      <a href="#fact" class="cat-fact">Fact-checking</a>
+      <a href="#mobile">Mobile</a>
+      <a href="admin.html" class="nav-admin">⚙ Admin</a>
+    </div>
+  </div>
+  <!-- Mobile drawer -->
+  <div class="nav-drawer" id="navDrawer">
+    <a href="#actualites" onclick="toggleDrawer()" class="active">📰 Actualités</a>
+    <a href="#reportages" onclick="toggleDrawer()">🎥 Reportages</a>
+    <a href="#fact" onclick="toggleDrawer()" class="cat-fact">✅ Fact-checking</a>
+    <a href="#mobile" onclick="toggleDrawer()">📱 Journalisme mobile</a>
+    <a href="https://instagram.com/Zoe_Emrys_Label" target="_blank">📷 Instagram</a>
+    <a href="tel:+243977429774">📞 +243 977 429 774</a>
+    <a href="admin.html" class="nav-admin">⚙ Espace Admin</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero" id="hero">
+  <div class="hero-bg"></div>
+  <img class="hero-img" id="heroImg" src="" alt="" style="display:none;"/>
+  <div class="hero-pattern"></div>
+  <div class="hero-badge">
+    <div class="ze">ZE</div>
+    <div class="ze-sub">Label</div>
+  </div>
+  <div class="hero-content" id="heroContent"></div>
+</section>
+
+<!-- MAIN CONTENT -->
+<div class="section-wrap">
+
+  <!-- SEARCH -->
+  <div class="search-wrap">
+    <input type="text" id="searchInput" placeholder="Rechercher un article, un sujet, un lieu…" oninput="filterAll()"/>
+    <button onclick="filterAll()">🔍 Chercher</button>
+  </div>
+
+  <!-- FILTER TAGS -->
+  <div class="filter-tags" id="filterTags">
+    <button class="filter-tag active" onclick="setFilter('all', this)">Tous</button>
+    <button class="filter-tag" onclick="setFilter('Actualités', this)">Actualités</button>
+    <button class="filter-tag" onclick="setFilter('Reportages', this)">Reportages</button>
+    <button class="filter-tag" onclick="setFilter('Fact-checking', this)">Fact-checking</button>
+    <button class="filter-tag" onclick="setFilter('Journalisme mobile', this)">Mobile</button>
+  </div>
+
+  <!-- ACTUALITÉS -->
+  <div class="section-heading" id="actualites">
+    <div class="cat-label">●</div>
+    <div class="cat-title">Actualités</div>
+    <div class="line"></div>
+    <a href="#" class="view-all" onclick="setFilter('Actualités',null);return false;">Voir tout →</a>
+  </div>
+  <div class="cards-grid featured-grid" id="actualitesGrid"></div>
+
+  <!-- REPORTAGES -->
+  <div class="section-heading" id="reportages">
+    <div class="cat-label" style="background:#1a5c2a;">●</div>
+    <div class="cat-title">Reportages</div>
+    <div class="line"></div>
+    <a href="#" class="view-all" onclick="setFilter('Reportages',null);return false;">Voir tout →</a>
+  </div>
+  <div class="cards-grid" id="reportagesGrid"></div>
+
+  <!-- FACT-CHECKING -->
+  <div class="section-heading" id="fact">
+    <div class="cat-label" style="background:#0a2a5c;">●</div>
+    <div class="cat-title">Fact-checking</div>
+    <div class="line"></div>
+    <a href="#" class="view-all" onclick="setFilter('Fact-checking',null);return false;">Voir tout →</a>
+  </div>
+  <div class="cards-grid" id="factGrid"></div>
+
+  <!-- MOBILE -->
+  <div class="section-heading" id="mobile">
+    <div class="cat-label" style="background:#5c1a5c;">●</div>
+    <div class="cat-title">Journalisme mobile</div>
+    <div class="line"></div>
+    <a href="#" class="view-all" onclick="setFilter('Journalisme mobile',null);return false;">Voir tout →</a>
+  </div>
+  <div class="cards-grid" id="mobileGrid"></div>
+
+  <!-- SEARCH RESULTS -->
+  <div id="searchResults" style="display:none;">
+    <div class="section-heading">
+      <div class="cat-title">Résultats de recherche</div>
+      <div class="line"></div>
+    </div>
+    <div class="cards-grid" id="searchGrid"></div>
+    <div class="no-results" id="noResults" style="display:none;">Aucun article trouvé.</div>
+  </div>
+
+  <!-- NEWSLETTER -->
+  <div class="newsletter-section">
+    <div class="newsletter-inner">
+      <div class="newsletter-label">✉ Newsletter</div>
+      <h2 class="newsletter-title">Restez informé depuis le terrain</h2>
+      <p class="newsletter-sub">Recevez nos articles, reportages et vérifications directement dans votre boîte mail. Aucun spam — uniquement l'information qui compte.</p>
+      <div class="newsletter-form">
+        <input type="email" id="newsletterEmail" placeholder="Votre adresse e-mail…"/>
+        <button onclick="subscribeNewsletter()">S'abonner</button>
+      </div>
+      <div class="newsletter-msg" id="newsletterMsg"></div>
+      <div class="newsletter-count" id="newsletterCount"></div>
+    </div>
+  </div>
+
+  <!-- ABOUT STRIP -->
+  <div class="about-strip">
+    <div class="logo-circle">ZE</div>
+    <div>
+      <h3>Zoé Emrys Label</h3>
+      <p>Média indépendant basé à Kinshasa, dédié au journalisme de terrain. Nous couvrons l'actualité de la RDC, de l'Afrique et du Monde avec rigueur, rapidité et fiabilité. Notre mission : informer autrement, vérifier les faits, donner la parole au terrain.</p>
+      <div class="tags">
+        <span class="tag">RDC</span>
+        <span class="tag">Afrique</span>
+        <span class="tag">Monde</span>
+        <span class="tag">Infos rapides</span>
+        <span class="tag">Reportages</span>
+        <span class="tag">Fact-checking</span>
+        <span class="tag">Journalisme mobile</span>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /section-wrap -->
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-main">
+    <div class="footer-brand">
+      <div class="logo-text">ZOÉ <span>EMRYS</span> LABEL</div>
+      <div class="tagline">— Informer autrement, depuis le terrain —</div>
+      <p>Média de journalisme mobile basé à Kinshasa. Actualités, reportages et vérification des faits depuis la RDC, l'Afrique et le Monde.</p>
+      <div class="footer-contact">
+        <a href="tel:+243977429774">📞 +243 977 429 774</a>
+        <a href="https://instagram.com/Zoe_Emrys_Label" target="_blank">📷 @Zoe_Emrys_Label</a>
+        <a href="#">📍 Kinshasa, RDC</a>
+      </div>
+    </div>
+    <div class="footer-col">
+      <h4>Catégories</h4>
+      <a href="#actualites">Actualités</a>
+      <a href="#reportages">Reportages</a>
+      <a href="#fact">Fact-checking</a>
+      <a href="#mobile">Journalisme mobile</a>
+    </div>
+    <div class="footer-col">
+      <h4>Zones</h4>
+      <a href="#">RDC</a>
+      <a href="#">Afrique</a>
+      <a href="#">Monde</a>
+      <a href="#">Kinshasa</a>
+    </div>
+    <div class="footer-col">
+      <h4>Liens</h4>
+      <a href="#">À propos</a>
+      <a href="#">Contact</a>
+      <a href="admin.html" style="color:var(--gold);">Espace admin</a>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <span>© 2025 Zoé Emrys Label. La vérité, notre priorité.</span>
+    <a href="admin.html">⚙ Espace Administration</a>
+  </div>
+</footer>
+
+<!-- ARTICLE MODAL -->
+<div class="modal-overlay" id="articleModal" onclick="handleModalClick(event)">
+  <div class="modal" id="modalBox">
+    <div class="modal-header-img" id="modalHeaderImg">
+      <img id="modalHeaderImgEl" src="" alt="" style="display:none;"/>
+      <div class="icon" id="modalIcon">📰</div>
+      <button class="modal-close-btn" onclick="closeModal()">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="modal-cat" id="modalCat"></div>
+      <h1 class="modal-title" id="modalTitle"></h1>
+      <div class="modal-meta" id="modalMeta"></div>
+      <div class="modal-content" id="modalContent"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+// ═══════════════════════════════════════════
+//  DATA STORE — clés partagées avec admin.html
+// ═══════════════════════════════════════════
+const ART_KEY        = 'zel_articles';
+const SET_KEY        = 'zel_settings';
+const TICKER_KEY     = 'zel_ticker';
+const NEWS_KEY       = 'zel_newsletter';   // abonnés newsletter
+const SESS_KEY       = 'zel_admin_session';
+
+const catMeta = {
+  'Actualités':        { cls: 'actualites', icon: '📰', color: '#CC2936' },
+  'Reportages':        { cls: 'reportages', icon: '🎥', color: '#1a5c2a' },
+  'Fact-checking':     { cls: 'fact',       icon: '✅', color: '#0a2a5c' },
+  'Journalisme mobile':{ cls: 'mobile',     icon: '📱', color: '#5c1a5c' },
+};
+
+const defaultArticles = [
+  {
+    id: 1, featured: true, image: '',
+    title: 'RDC : la situation sécuritaire à l\'Est du pays reste préoccupante',
+    excerpt: 'Les derniers développements sur le terrain dans les provinces du Nord-Kivu et de l\'Ituri font état de tensions persistantes malgré les appels au dialogue.',
+    content: '<p>La situation sécuritaire dans l\'Est de la République Démocratique du Congo continue de préoccuper les observateurs internationaux. Les provinces du Nord-Kivu et de l\'Ituri restent des zones de tensions persistantes, malgré les multiples initiatives de paix engagées ces dernières semaines.</p><p>Selon nos correspondants sur le terrain, plusieurs localités ont signalé des mouvements de groupes armés dans les dernières 48 heures. Les populations civiles continuent de subir les conséquences de ce conflit qui dure depuis des années.</p><p>Les autorités congolaises ont réaffirmé leur engagement à rétablir la paix dans ces régions, tout en appelant la communauté internationale à renforcer son soutien aux Forces Armées de la RDC (FARDC).</p>',
+    category: 'Actualités', date: '16 Mai 2025', author: 'Zoé Emrys'
+  },
+  {
+    id: 2, image: '',
+    title: 'Kinshasa : flambée des prix sur les marchés de la capitale',
+    excerpt: 'Le coût des denrées alimentaires de base atteint des niveaux record dans plusieurs marchés de Kinshasa, affectant directement les ménages les plus vulnérables.',
+    content: '<p>Les marchés de Kinshasa enregistrent une hausse significative des prix des denrées de première nécessité. Le prix du sac de farine de manioc a augmenté de près de 30% en l\'espace d\'un mois.</p><p>Cette situation s\'explique par plusieurs facteurs : la dépréciation du franc congolais face au dollar américain, les difficultés d\'approvisionnement liées à l\'état des routes et les perturbations logistiques dans certaines provinces productrices.</p>',
+    category: 'Actualités', date: '15 Mai 2025', author: 'Zoé Emrys'
+  },
+  {
+    id: 3, image: '',
+    title: 'Sommet de l\'UA : la RDC défend sa position sur la sécurité régionale',
+    excerpt: 'Le représentant congolais a présenté un mémorandum détaillant les besoins urgents du pays face aux défis sécuritaires transfrontaliers.',
+    content: '<p>Lors du dernier sommet de l\'Union Africaine, la délégation de la RDC a présenté un mémorandum complet sur les enjeux sécuritaires régionaux. Le document détaille les défis auxquels fait face le pays face aux groupes armés opérant depuis les territoires voisins.</p>',
+    category: 'Actualités', date: '14 Mai 2025', author: 'Zoé Emrys'
+  },
+  {
+    id: 4, image: '',
+    title: 'Reportage : dans les coulisses du marché de Makala',
+    excerpt: 'Notre équipe s\'est rendue au cœur de l\'un des marchés les plus animés de Kinshasa pour documenter la vie des commerçants au quotidien.',
+    content: '<p>Dès l\'aube, le marché de Makala s\'anime. Des centaines de vendeurs installent leurs étals dans un ballet organisé qui témoigne d\'une économie informelle bien rodée.</p><p>Entre les cris des vendeurs, les odeurs de cuisine de rue et les négociations acharnées, c\'est tout un pan de la société kinoise qui se dévoile.</p>',
+    category: 'Reportages', date: '13 Mai 2025', author: 'Zoé Emrys'
+  },
+  {
+    id: 5, image: '',
+    title: 'Sur les traces des pêcheurs du fleuve Congo',
+    excerpt: 'Un reportage immersif au cœur des communautés de pêcheurs qui vivent et travaillent sur le deuxième plus grand fleuve du monde.',
+    content: '<p>À la surface du fleuve Congo, les pirogues glissent silencieusement dans la brume matinale. Les pêcheurs, héritiers d\'un savoir-faire transmis de génération en génération, lancent leurs filets avec une précision remarquable.</p>',
+    category: 'Reportages', date: '10 Mai 2025', author: 'Zoé Emrys'
+  },
+  {
+    id: 6, image: '',
+    title: 'VÉRIFICATION : est-il vrai que la RDC possède 80% des réserves mondiales de coltan ?',
+    excerpt: 'Une affirmation qui circule largement sur les réseaux sociaux mérite d\'être vérifiée à la lumière des données officielles disponibles.',
+    content: '<p><strong>L\'affirmation :</strong> La RDC posséderait 80% des réserves mondiales de coltan.</p><p><strong>Verdict : PARTIELLEMENT VRAI</strong> — La part exacte varie entre 50% et 80% selon les sources, mais la prédominance de la RDC est incontestable.</p>',
+    category: 'Fact-checking', date: '12 Mai 2025', author: 'Zoé Emrys'
+  },
+  {
+    id: 7, image: '',
+    title: 'VÉRIFICATION : l\'Afrique reçoit-elle moins d\'aide internationale ?',
+    excerpt: 'Les chiffres bruts peuvent être trompeurs. Nous avons analysé les données de l\'OCDE sur l\'aide publique au développement destinée au continent africain.',
+    content: '<p><strong>Verdict : TROMPEUR</strong> — L\'aide a augmenté en valeur absolue mais reste insuffisante au regard des besoins et n\'a pas suivi la croissance de la population africaine.</p>',
+    category: 'Fact-checking', date: '8 Mai 2025', author: 'Zoé Emrys'
+  },
+  {
+    id: 8, image: '',
+    title: 'Le journalisme mobile en RDC : couvrir l\'actualité avec un smartphone',
+    excerpt: 'Comment les journalistes congolais utilisent le journalisme mobile pour couvrir des zones où les équipements professionnels sont impossibles à déployer.',
+    content: '<p>Dans les zones reculées de la RDC, là où les routes sont impraticables et l\'électricité rare, le smartphone est devenu l\'outil principal du journaliste de terrain.</p>',
+    category: 'Journalisme mobile', date: '9 Mai 2025', author: 'Zoé Emrys'
+  },
+  {
+    id: 9, image: '',
+    title: 'Formations : Zoé Emrys Label lance un programme pour les jeunes journalistes',
+    excerpt: 'Le média kinois lance une initiative de formation au journalisme mobile destinée aux jeunes de 18 à 30 ans souhaitant embrasser la profession.',
+    content: '<p>Zoé Emrys Label annonce le lancement d\'un programme de formation au journalisme mobile. Le programme couvrira : les techniques de tournage et de photographie mobile, la rédaction pour le web, la vérification des faits et la sécurité numérique.</p>',
+    category: 'Journalisme mobile', date: '7 Mai 2025', author: 'Zoé Emrys'
+  }
+];
+
+// ─── Load data ───
+function getArticles() {
+  try { return JSON.parse(localStorage.getItem(ART_KEY)) || defaultArticles; }
+  catch { return defaultArticles; }
+}
+function getSettings() {
+  try { return JSON.parse(localStorage.getItem(SET_KEY)) || {}; }
+  catch { return {}; }
+}
+function getTicker() {
+  try {
+    const t = JSON.parse(localStorage.getItem(TICKER_KEY));
+    return Array.isArray(t) && t.length ? t : null;
+  } catch { return null; }
+}
+function getSubscribers() {
+  try { return JSON.parse(localStorage.getItem(NEWS_KEY)) || []; }
+  catch { return []; }
+}
+
+// ─── State ───
+let currentFilter = 'all';
+
+// ─── Admin bar ───
+function checkAdminBar() {
+  if (sessionStorage.getItem(SESS_KEY) === '1') {
+    document.getElementById('adminBar').classList.add('visible');
+  }
+}
+
+// ─── Ticker dynamique ───
+function renderTicker() {
+  const custom = getTicker();
+  if (!custom) return;
+  const track = document.getElementById('tickerTrack');
+  const doubled = [...custom, ...custom];
+  track.innerHTML = doubled.map(t => `<span>${t}</span>`).join('');
+}
+
+// ─── Newsletter ───
+function subscribeNewsletter() {
+  const emailEl = document.getElementById('newsletterEmail');
+  const msgEl   = document.getElementById('newsletterMsg');
+  const email   = emailEl.value.trim();
+
+  msgEl.className = 'newsletter-msg';
+  if (!email || !email.includes('@') || !email.includes('.')) {
+    msgEl.textContent = '⚠ Veuillez entrer une adresse e-mail valide.';
+    msgEl.classList.add('error');
+    return;
+  }
+
+  const subs = getSubscribers();
+  if (subs.includes(email)) {
+    msgEl.textContent = 'ℹ Vous êtes déjà abonné(e) à notre newsletter.';
+    msgEl.classList.add('error');
+    return;
+  }
+
+  subs.push(email);
+  localStorage.setItem(NEWS_KEY, JSON.stringify(subs));
+  emailEl.value = '';
+  msgEl.textContent = '✓ Merci ! Vous êtes maintenant abonné(e) à la newsletter de Zoé Emrys Label.';
+  msgEl.classList.add('success');
+  updateNewsletterCount();
+
+  setTimeout(() => { msgEl.className = 'newsletter-msg'; }, 5000);
+}
+
+function updateNewsletterCount() {
+  const subs = getSubscribers();
+  const el = document.getElementById('newsletterCount');
+  if (subs.length > 0) {
+    el.innerHTML = `<strong>${subs.length}</strong> abonné${subs.length > 1 ? 's' : ''} à la newsletter`;
+  }
+}
+
+// ─── Mobile nav ───
+function toggleDrawer() {
+  document.getElementById('navDrawer').classList.toggle('open');
+}
+
+// ─── Render Hero ───
+function renderHero(articles) {
+  const hero = articles.find(a => a.featured) || articles[0];
+  if (!hero) return;
+
+  // Hero image
+  const heroImg = document.getElementById('heroImg');
+  if (hero.image) {
+    heroImg.src = hero.image;
+    heroImg.style.display = 'block';
+  } else {
+    heroImg.style.display = 'none';
+  }
+
+  document.getElementById('heroContent').innerHTML = `
+    <div class="hero-category"><span>● ${hero.category}</span></div>
+    <h1 class="hero-title">${hero.title}</h1>
+    <div class="hero-meta">
+      <span class="date">📅 ${hero.date}</span>
+      <span class="author">✍ ${hero.author}</span>
+    </div>
+    <p class="hero-excerpt">${hero.excerpt}</p>
+    <button class="hero-cta" onclick="openModal(${hero.id})">
+      Lire l'article complet
+      <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M3 8h10M9 4l4 4-4 4"/>
+      </svg>
+    </button>
+  `;
+}
+
+// ─── Render Card ───
+function cardHTML(a, large = false) {
+  const meta = catMeta[a.category] || { cls: 'default', icon: '📄' };
+  const imgHTML = a.image
+    ? `<img src="${a.image}" alt="${a.title}" loading="lazy"/>`
+    : `<div class="card-thumb-icon">${meta.icon}</div>`;
+
+  return `
+    <div class="card${large ? ' large' : ''}" onclick="openModal(${a.id})" style="animation-delay:${Math.random()*0.3}s">
+      <div class="card-thumb ${meta.cls}">
+        ${imgHTML}
+        <span class="cat-chip ${meta.cls}">${a.category}</span>
+      </div>
+      <div class="card-body">
+        <div class="card-date">📅 ${a.date}</div>
+        <div class="card-title">${a.title}</div>
+        <div class="card-excerpt">${a.excerpt}</div>
+      </div>
+      <div class="card-footer">
+        <span class="card-author">✍ ${a.author}</span>
+        <span class="card-read">Lire →</span>
+      </div>
+    </div>
+  `;
+}
+
+// ─── Render sections ───
+function renderSections(articles) {
+  renderHero(articles);
+  const byCategory = (cat) => articles.filter(a => a.category === cat);
+
+  const act = byCategory('Actualités');
+  document.getElementById('actualitesGrid').innerHTML =
+    act.length ? act.slice(0,3).map((a,i) => cardHTML(a, i===0)).join('') : '<div class="no-results">Aucun article.</div>';
+
+  const rep = byCategory('Reportages');
+  document.getElementById('reportagesGrid').innerHTML =
+    rep.length ? rep.slice(0,3).map(a => cardHTML(a)).join('') : '<div class="no-results">Aucun article.</div>';
+
+  const fact = byCategory('Fact-checking');
+  document.getElementById('factGrid').innerHTML =
+    fact.length ? fact.slice(0,3).map(a => cardHTML(a)).join('') : '<div class="no-results">Aucun article.</div>';
+
+  const mob = byCategory('Journalisme mobile');
+  document.getElementById('mobileGrid').innerHTML =
+    mob.length ? mob.slice(0,3).map(a => cardHTML(a)).join('') : '<div class="no-results">Aucun article.</div>';
+}
+
+// ─── Filter ───
+function setFilter(filter, btn) {
+  currentFilter = filter;
+  document.querySelectorAll('.filter-tag').forEach(b => b.classList.remove('active'));
+  if (btn) btn.classList.add('active');
+  filterAll();
+}
+
+function filterAll() {
+  const q = document.getElementById('searchInput').value.trim().toLowerCase();
+  const articles = getArticles();
+  const hasQuery = q.length > 0;
+  const hasFilter = currentFilter !== 'all';
+
+  if (!hasQuery && !hasFilter) {
+    document.getElementById('searchResults').style.display = 'none';
+    ['actualites','reportages','fact','mobile'].forEach(id => {
+      document.getElementById(id).style.display = '';
+    });
+    document.getElementById('actualitesGrid').closest ? null : null;
+    renderSections(articles);
+    return;
+  }
+
+  ['actualites','reportages','fact','mobile'].forEach(id => {
+    document.getElementById(id).style.display = hasFilter || hasQuery ? '' : '';
+  });
+
+  let filtered = articles;
+  if (hasFilter) filtered = filtered.filter(a => a.category === currentFilter);
+  if (hasQuery) filtered = filtered.filter(a =>
+    a.title.toLowerCase().includes(q) ||
+    a.excerpt.toLowerCase().includes(q) ||
+    (a.content || '').toLowerCase().includes(q) ||
+    a.category.toLowerCase().includes(q)
+  );
+
+  document.getElementById('searchResults').style.display = 'block';
+  document.getElementById('searchGrid').innerHTML = filtered.length
+    ? filtered.map(a => cardHTML(a)).join('')
+    : '';
+  document.getElementById('noResults').style.display = filtered.length ? 'none' : 'block';
+}
+
+// ─── Modal ───
+function openModal(id) {
+  const articles = getArticles();
+  const a = articles.find(x => x.id === id);
+  if (!a) return;
+  const meta = catMeta[a.category] || { cls: 'default', icon: '📄', color: '#C9A84C' };
+
+  // Header image
+  const imgEl = document.getElementById('modalHeaderImgEl');
+  const iconEl = document.getElementById('modalIcon');
+  if (a.image) {
+    imgEl.src = a.image;
+    imgEl.style.display = 'block';
+    iconEl.style.opacity = '0.04';
+  } else {
+    imgEl.style.display = 'none';
+    iconEl.style.opacity = '0.1';
+    document.getElementById('modalHeaderImg').style.background =
+      `linear-gradient(135deg, ${meta.color}22, ${meta.color}44)`;
+  }
+  iconEl.textContent = meta.icon;
+
+  document.getElementById('modalCat').innerHTML =
+    `<span class="cat-chip ${meta.cls}" style="padding:0.3rem 0.8rem;">${a.category}</span>`;
+  document.getElementById('modalTitle').textContent = a.title;
+  document.getElementById('modalMeta').innerHTML =
+    `<span>📅 ${a.date}</span><span>✍ <strong>${a.author}</strong></span>`;
+  document.getElementById('modalContent').innerHTML = a.content;
+  document.getElementById('articleModal').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+function closeModal() {
+  document.getElementById('articleModal').classList.remove('open');
+  document.body.style.overflow = '';
+}
+function handleModalClick(e) {
+  if (e.target === document.getElementById('articleModal')) closeModal();
+}
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') { closeModal(); document.getElementById('navDrawer').classList.remove('open'); }
+});
+
+// ─── Date topbar ───
+function setDate() {
+  const d = new Date();
+  const opts = { weekday:'long', year:'numeric', month:'long', day:'numeric' };
+  const el = document.getElementById('topbar-date');
+  if (el) el.textContent = 'Kinshasa · ' + d.toLocaleDateString('fr-FR', opts);
+}
+
+// ─── Écoute les changements localStorage (sync temps réel) ───
+window.addEventListener('storage', (e) => {
+  if (e.key === ART_KEY || e.key === TICKER_KEY || e.key === NEWS_KEY) {
+    renderSections(getArticles());
+    renderTicker();
+    updateNewsletterCount();
+  }
+});
+
+// ─── INIT ───
+setDate();
+checkAdminBar();
+renderTicker();
+renderSections(getArticles());
+updateNewsletterCount();
+</script>
+</body>
+</html>
